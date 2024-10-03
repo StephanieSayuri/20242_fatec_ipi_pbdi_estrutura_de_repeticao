@@ -291,7 +291,171 @@ $$;
 -- Leia um número indeterminado de pares de valores M e N (pare quando qualquer um desses 
 -- valores for menor ou igual a zero). Para cada par, imprima a sequência do menor para o 
 -- maior (incluindo ambos) e a soma de inteiros consecutivos entre eles (incluindo ambos).
+-- VERSÃO LOOP
+DO $$ 
+DECLARE
+    m INT;
+    n INT;
+    swap INT;
+    saida TEXT;
+    soma INT;
+BEGIN
+  <<externo>>
+    LOOP
+        m := valor_aleatorio_entre(-5, 100);
+        n := valor_aleatorio_entre(-5, 100);
+        RAISE NOTICE '% %', m, n;
+        
+        EXIT externo WHEN m <= 0 OR n <= 0;
 
+        IF m > n THEN
+            swap := m;
+            m := n;
+            n := swap;
+        END IF;
+
+        saida := '';  -- Inicializa a string de saída
+        soma := 0;    -- Inicializa a soma
+
+        <<interno>> 
+        LOOP
+        -- Concatena os valores de m à string de saída
+            saida := saida || m || ' ';
+            soma := soma + m; 
+            m := m + 1;
+
+            EXIT interno WHEN m > n;
+        END LOOP;
+
+        saida := saida || 'Soma = ' || soma;
+        RAISE NOTICE '%', saida;
+    END LOOP;
+END;
+$$;
+
+-- VERSÃO WHILE
+DO $$
+DECLARE
+    m INT := valor_aleatorio_entre(-5, 100);  
+    n INT := valor_aleatorio_entre(-5, 100);  
+    swap INT;
+    saida TEXT;
+    soma INT;
+BEGIN
+    RAISE NOTICE '% %', m, n;
+
+    WHILE m > 0 AND n > 0 
+        LOOP
+            IF m > n THEN
+                swap := m;
+                m := n;
+                n := swap;
+            END IF;
+
+            saida := '';  -- Inicializa a string de saída
+            soma := 0;    -- Inicializa a soma
+
+            WHILE m <= n 
+                LOOP
+                    saida := saida || m || ' ';  
+                    soma := soma + m;  
+                    m := m + 1;  
+                END LOOP;
+
+            saida := saida || 'Soma = ' || soma;
+            RAISE NOTICE '%', saida;
+
+            -- Gera novos valores aleatórios para m e n para a próxima iteração
+            m := valor_aleatorio_entre(-5, 100);
+            n := valor_aleatorio_entre(-5, 100);
+            RAISE NOTICE '% %', m, n;
+        END LOOP;
+END;
+$$;
+
+-- VERSÃO FOR
+DO $$
+DECLARE
+    m INT;
+    n INT;
+    swap INT;
+    saida TEXT;
+    soma INT;
+BEGIN
+    LOOP
+        m := valor_aleatorio_entre(-5, 100);
+        n := valor_aleatorio_entre(-5, 100);
+        RAISE NOTICE '% %', m, n;
+        
+        EXIT WHEN m <= 0 OR n <= 0;
+
+        IF m > n THEN
+            swap := m;
+            m := n;
+            n := swap;
+        END IF;
+
+        saida := '';  
+        soma := 0;    
+
+        -- Loop FOR para percorrer os valores de m até n
+        FOR numero IN m..n 
+            LOOP
+                saida := saida || numero || ' '; 
+                soma := soma + numero; 
+            END LOOP;
+
+        saida := saida || 'Soma = ' || soma;
+        RAISE NOTICE '%', saida;
+    END LOOP;
+END;
+$$;
+
+-- VERSÃO FOREACH
+DO $$
+DECLARE
+    m INT;
+    n INT;
+    swap INT;
+    saida TEXT;
+    soma INT;
+    vetor INT[];  -- Declaração do vetor
+    numero INT;
+BEGIN
+    LOOP
+        m := valor_aleatorio_entre(-5, 100);
+        n := valor_aleatorio_entre(-5, 100);
+        RAISE NOTICE '% %', m, n;
+        
+        EXIT WHEN m <= 0 OR n <= 0;
+
+        IF m > n THEN
+            swap := m;
+            m := n;
+            n := swap;
+        END IF;
+
+        saida := '';  
+        soma := 0;   
+        vetor := ARRAY[]::INT[]; 
+
+        FOR numero IN m..n 
+            LOOP
+                vetor := vetor || numero;
+            END LOOP;
+
+        -- Itera sobre o vetor com FOREACH
+        FOREACH numero IN ARRAY vetor 
+            LOOP
+                saida := saida || numero || ' ';
+                soma := soma + numero; 
+            END LOOP;
+
+        saida := saida || 'Soma = ' || soma;
+        RAISE NOTICE '%', saida;
+    END LOOP;
+END;
+$$;
 
 -- 1.2 Faça um programa que calcule o determinante de uma matriz quadrada de ordem 3
 -- utilizando a regra de Sarrus. Veja a regra aqui: https://en.wikipedia.org/wiki/Rule_of_Sarrus
