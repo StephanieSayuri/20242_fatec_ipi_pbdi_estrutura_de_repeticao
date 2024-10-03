@@ -65,6 +65,91 @@ $$;
 -- 1.1.2 Gerar inteiros no intervalo de -50 a 50.
 -- Escreva um programa que leia 6 números. Esses números serão apenas positivos ou 
 -- negativos (desconsidere valores nulos). Imprima o número total de números positivos.
+-- VERSÃO LOOP
+DO $$ 
+DECLARE
+    iteracao INT := 1;  
+    valor INT;  
+    total_positivo INT := 0;  -- Declara e inicializa a variável 'total_positivo' para contar quantos números positivos foram gerados
+BEGIN
+    LOOP  
+        valor := valor_aleatorio_entre(-50, 50);  -- Atribui à variável 'valor' um número aleatório entre -50 e 50
+        RAISE NOTICE '%', valor;  
+
+        IF valor > 0 THEN  -- Se o valor for maior que 0 (positivo)
+            total_positivo := total_positivo + 1;  -- Incrementa o contador 'total_positivo'
+        END IF;
+
+        iteracao := iteracao + 1;  -- Incrementa o valor de 'iteracao' em 1
+        EXIT WHEN iteracao > 6;  -- Sai do loop quando 'iteracao' for maior que 6 (ou seja, após 6 iterações)
+    END LOOP;
+
+    RAISE NOTICE '% valores positivos', total_positivo;  -- Exibe o total de valores positivos gerados
+END;
+$$;
+
+-- VERSÃO WHILE
+DO $$  
+DECLARE
+    iteracao INT := 1;  
+    valor INT;  
+    total_positivo INT := 0;  
+BEGIN
+    WHILE iteracao <= 6  -- Inicia um loop WHILE, que será executado enquanto 'iteracao' for menor ou igual a 6
+        LOOP
+            valor := valor_aleatorio_entre(-50, 50);  
+            RAISE NOTICE '%', valor;  
+
+            IF valor > 0 THEN  
+                total_positivo := total_positivo + 1;  -- Incrementa a contagem de valores positivos
+            END IF;
+
+            iteracao := iteracao + 1;  -- Incrementa a variável 'iteracao' em 1, controlando o número de iterações
+        END LOOP;  -- Fim do loop WHILE, volta para a condição 'WHILE iteracao <= 6'
+
+    RAISE NOTICE '% valores positivos', total_positivo;  
+END;
+$$;
+
+-- VERSÃO FOR
+DO $$  
+DECLARE
+    valor INT;  
+    total_positivo INT := 0;  
+BEGIN
+    FOR iteracao IN 1..6 LOOP  -- Inicia um loop FOR que será executado 6 vezes, de iteracao = 1 até iteracao = 6
+        valor := valor_aleatorio_entre(-50, 50);  -- Gera um valor aleatório entre -50 e 50 e atribui à variável 'valor'
+        RAISE NOTICE '%', valor; 
+
+        IF valor > 0 THEN 
+            total_positivo := total_positivo + 1; 
+        END IF;
+    END LOOP;  
+
+    RAISE NOTICE '% valores positivos', total_positivo;
+END;
+$$;
+
+-- VERSÃO FOREACH
+DO $$  
+DECLARE
+    vetor INT[] := ARRAY[1, 2, 3, 4, 5, 6];  -- Declara um array com 6 elementos (de 1 a 6) para controlar o número de iterações
+    iteracao INT;  
+    valor INT;  
+    total_positivo INT := 0;  
+BEGIN
+    FOREACH iteracao IN ARRAY vetor LOOP  -- Inicia um loop FOREACH que percorre cada valor do array 'vetor'
+        valor := valor_aleatorio_entre(-50, 50);  
+        RAISE NOTICE '%', valor;  
+
+        IF valor > 0 THEN 
+            total_positivo := total_positivo + 1;
+        END IF;
+    END LOOP; 
+
+    RAISE NOTICE '% valores positivos', total_positivo;
+END;
+$$;
 
 
 -- 1.1.3 Gerar inteiros no intervalo de 20 a 50.
