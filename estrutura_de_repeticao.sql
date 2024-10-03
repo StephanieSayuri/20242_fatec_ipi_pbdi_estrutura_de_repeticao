@@ -460,3 +460,66 @@ $$;
 -- 1.2 Faça um programa que calcule o determinante de uma matriz quadrada de ordem 3
 -- utilizando a regra de Sarrus. Veja a regra aqui: https://en.wikipedia.org/wiki/Rule_of_Sarrus
 -- Preencha a matriz com valores inteiros aleatórios no intervalo de 1 a 12.
+DO $$
+DECLARE
+    t INT := 3;  -- Define o tamanho da matriz (3x3)
+    k INT;  -- Índice para ajustar a navegação pela diagonal principal
+    l INT;  -- Índice para ajustar a navegação pela diagonal secundária
+    m INT;  -- Armazena o produto dos elementos da diagonal principal
+    n INT;  -- Armazena o produto dos elementos da diagonal secundária
+    d INT := 0;  -- Armazena o valor do determinante final
+    vetor INT[];  -- Vetor que armazenará as linhas da matriz
+    matriz INT[];  -- Matriz que armazenará as 3 linhas geradas aleatoriamente
+BEGIN
+    -- Gera a matriz 3x3 com valores aleatórios entre 1 e 12
+    FOR indice_linha IN 1..t LOOP
+        vetor := ARRAY[]::INT[];  -- Inicializa o vetor que será preenchido com uma nova linha
+        FOR indice_coluna IN 1..t 
+            LOOP
+                -- Adiciona um número aleatório ao vetor (linha da matriz)
+                vetor := vetor || valor_aleatorio_entre(1, 12);
+            END LOOP;
+        -- Adiciona a linha gerada à matriz
+        matriz := matriz || ARRAY[vetor];
+    END LOOP;
+    
+    RAISE NOTICE '%', matriz;
+
+    -- Loop para calcular o determinante utilizando a regra de Sarrus (diagonais)
+    FOR indice_diag IN 0..(t - 1)
+        LOOP
+            m := 1;  -- Inicializa o produto da diagonal principal
+            n := 1;  -- Inicializa o produto da diagonal secundária
+        
+        -- Calcula os produtos das diagonais principais e secundárias
+        FOR linha IN 1..t 
+            LOOP
+                k := linha + indice_diag;  -- Ajusta o índice da coluna para a diagonal principal
+                l := t + 1 - linha - indice_diag;  -- Ajusta o índice da coluna para a diagonal secundária
+
+                -- Ajusta k se ultrapassar o limite da matriz
+                IF k > t THEN
+                    k := k - t;
+                END IF;
+
+                -- Ajusta l se for menor que 1
+                IF l < 1 THEN
+                    l := l + t;
+                END IF;
+
+                -- Calcula o produto dos elementos da diagonal principal e secundária
+                m := m * matriz[linha][k];  -- Produto da diagonal principal
+                n := n * matriz[linha][l];  -- Produto da diagonal secundária
+            END LOOP;
+
+        -- Exibe os produtos das diagonais para visualização
+        RAISE NOTICE '+% -%', m, n;
+        
+        -- Atualiza o valor do determinante (soma do produto da diagonal principal e subtração da secundária)
+        d := d + m - n;
+    END LOOP;
+
+    -- Exibe o determinante final
+    RAISE NOTICE 'determinante: %', d;
+END;
+$$;
