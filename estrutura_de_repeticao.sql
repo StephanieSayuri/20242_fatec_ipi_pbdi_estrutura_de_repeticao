@@ -154,6 +154,137 @@ $$;
 
 -- 1.1.3 Gerar inteiros no intervalo de 20 a 50.
 -- Leia dois valores inteiros X e Y. Imprima a soma de todos os valores ímpares entre eles.
+-- VERSÃO LOOP
+DO $$  
+DECLARE
+    x INT := valor_aleatorio_entre(20, 50);  -- Gera um valor aleatório entre 20 e 50 e atribui a 'x'
+    y INT := valor_aleatorio_entre(20, 50);  -- Gera outro valor aleatório entre 20 e 50 e atribui a 'y'
+    swap INT;  -- Declara a variável 'swap' que será usada para trocar os valores de 'x' e 'y'
+    soma INT := 0;  -- Declara a variável 'soma', inicializada com 0, que acumulará a soma dos valores ímpares entre 'x' e 'y'
+BEGIN
+    RAISE NOTICE 'x: %, y: %', x, y; 
+    -- Verifica se 'x' é maior que 'y' e, se for, troca seus valores
+    IF x > y THEN
+        swap := x;  -- Armazena 'x' temporariamente em 'swap'
+        x := y;  -- Atribui 'y' a 'x'
+        y := swap;  -- Atribui o valor de 'swap' (que contém 'x') a 'y', completando a troca
+    END IF;
+
+    x := x + 1;
+    LOOP
+        EXIT WHEN x >= y;
+
+        IF x % 2 <> 0 THEN  -- Se 'x' for ímpar
+            soma := soma + x;  -- Adiciona 'x' à variável 'soma'
+        END IF;
+
+        x := x + 1;  -- Incrementa 'x' para passar para o próximo valor
+    END LOOP;
+
+    RAISE NOTICE '%', soma;
+END;
+$$;
+
+-- VERSÃO WHILE
+DO $$
+DECLARE
+    x INT := valor_aleatorio_entre(20, 50);  
+    y INT := valor_aleatorio_entre(20, 50); 
+    swap INT;  
+    soma INT := 0;  
+BEGIN
+    RAISE NOTICE 'x: %, y: %', x, y; 
+
+    IF x > y THEN
+        swap := x;  
+        x := y; 
+        y := swap;
+    END IF;
+
+    x := x + 1;
+
+    -- Inicia um loop 'WHILE' para somar os valores ímpares entre 'x' e 'y'
+    WHILE x < y LOOP  -- Enquanto 'x' for menor que 'y'
+        IF x % 2 <> 0 THEN  -- Se 'x' for ímpar (x % 2 != 0)
+            soma := soma + x;  
+        END IF;
+
+        x := x + 1; 
+    END LOOP;  
+
+    RAISE NOTICE '%', soma; 
+END;
+$$;
+
+-- VERSÃO FOR
+DO $$  
+DECLARE
+    x INT := valor_aleatorio_entre(20, 50);  
+    y INT := valor_aleatorio_entre(20, 50);  
+    swap INT;  
+    soma INT := 0; 
+BEGIN
+    RAISE NOTICE 'x: %, y: %', x, y;  
+
+    IF x > y THEN
+        swap := x; 
+        x := y;  
+        y := swap; 
+    END IF;
+
+    x := x + 1;  
+    y := y - 1;  
+
+    -- Laço FOR para percorrer os números entre 'x' e 'y'
+    FOR numero IN x..y LOOP  -- O loop percorre os valores de 'x' até 'y', substituindo 'i' por 'numero'
+        IF numero % 2 <> 0 THEN  -- Se o valor for ímpar
+            soma := soma + numero;  -- Adiciona o valor de 'numero' à soma
+        END IF;
+    END LOOP;
+
+    RAISE NOTICE '%', soma;
+END;
+$$;
+
+-- VERSÃO FOREACH
+DO $$ 
+DECLARE
+    x INT := valor_aleatorio_entre(20, 50);  
+    y INT := valor_aleatorio_entre(20, 50);  
+    swap INT;  
+    soma INT := 0;  
+    vetor INT[];  -- Declara um vetor de inteiros que será usado para armazenar os números entre 'x' e 'y'
+    numero INT;  -- Declara a variável 'numero', que substituirá 'i' e será usada nos loops
+BEGIN
+    RAISE NOTICE 'x: %, y: %', x, y;
+
+    IF x > y THEN
+        swap := x;  
+        x := y;  
+        y := swap;  
+    END IF;
+
+    x := x + 1;  
+    y := y - 1; 
+
+    -- Laço FOR para percorrer os valores entre 'x' e 'y'
+    FOR numero IN x..y LOOP
+        vetor := vetor || numero;  -- Adiciona o valor de 'numero' ao vetor
+    END LOOP;
+    
+    -- Verifica se x é menor que y para evitar um vetor vazio
+    IF x < y THEN  -- Se 'x' for menor que 'y', o vetor não está vazio
+        -- Laço FOREACH para percorrer os valores do vetor
+        FOREACH numero IN ARRAY vetor LOOP
+        IF numero % 2 <> 0 THEN  -- Verifica se o valor é ímpar
+            soma := soma + numero;  -- Se for ímpar, adiciona o valor à soma
+        END IF;
+        END LOOP;
+    END IF;
+
+    RAISE NOTICE '%', soma;
+END;
+$$;
 
 
 -- 1.1.4 Gerar inteiros no intervalo de 1 a 100.
